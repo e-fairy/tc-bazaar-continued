@@ -15,12 +15,12 @@ All features of the script are activated by double clicking an input
 # Install
 
 1.  Install a userscript manager (I only test with [tampermonkey](https://www.tampermonkey.net/))
-2.  Click here to install
+2.  [Click here to install](https://github.com/e-fairy/tc-bazaar-continued/raw/main/bazaar.user.js)
 
 # Fork changes/fixes
 
 -   [x] Update auto pricing elements
 -   [x] Cancel API requests if an API key is not given
--   [] Bazaar checkboxes
--   [] Fix the gun shop sell button
--   [] Better API key input
+-   [ ] Bazaar checkboxes
+-   [ ] Fix the gun shop sell button
+-   [ ] Better API key input
