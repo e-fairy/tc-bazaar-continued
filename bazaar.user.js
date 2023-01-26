@@ -9,6 +9,7 @@
 // @match        *.torn.com/index.php*
 // @match        *.torn.com/shops.php*
 // @match        *.torn.com/trade.php*
+// @match        *.torn.com/imarket.php*
 // @grant        GM_xmlhttpRequest
 // ==/UserScript==
 
@@ -19,8 +20,8 @@ function auto_price(lowest_price) {
     return lowest_price - 1;
 }
 
-function lowest_market_price(itemID) {
-    return torn_api(`market.${itemID}.bazaar`)
+function lowest_market_price(itemID, type) {
+    return torn_api(`market.${itemID}.${type}`)
         .then((r) => {
             //const market_prices = Object.values(r).flat().filter(function (l) {return l != null} )
             const market_prices = Object.values(r).reduce((acc, cur) => acc.concat(cur), []);
@@ -41,11 +42,11 @@ document.addEventListener('dblclick', (e) => {
                 if (input.className.includes('buyAmountInput')) max_buy(input); //other bazaar buy
                 break;
             case '/bazaar.php#/add':
-                if (input.className.includes('input-money')) auto_price_add(input); //my bazaar add
+                if (input.className.includes('input-money')) auto_price_add(input, 'bazaar'); //my bazaar add
                 else if (input.className === 'clear-all') max_qty(input); //my bazaar qty add
                 break;
             case '/bazaar.php#/manage':
-                if (input.className.includes('input-money')) auto_price_manage(input); //my bazaar manage
+                if (input.className.includes('input-money')) auto_price_manage(input, 'bazaar'); //my bazaar manage
                 else if (input.className.includes('numberInput')) max_qty_rem(input); //my bazaar qty remove
                 break;
             case '/bigalgunshop.php':
@@ -53,6 +54,11 @@ document.addEventListener('dblclick', (e) => {
                 if (input.name === 'buyAmount[]') buy_hundred(input); //city shop buy 100
                 else if (input.id.includes('sell')) city_sell_all(input); //city shop sell all
                 else if (input.id.includes('item')) city_sell_all(input); //bigal sell all
+                break;
+            case '/imarket.php#/p=addl':
+                console.log('test');
+                if (input.className === 'clear-all') max_qty(input); // item market max qty
+                if (input.className.includes('input-money')) auto_price_add(input, 'itemmarket'); // item market price
                 break;
             default: //trade qty input
                 if (input.id.includes('item')) foriegn_max(input); //foreign buy
@@ -92,20 +98,21 @@ const get_torn_items = () =>
         )
         .catch((err) => console.log(err));
 //my bazaar add
-async function auto_price_add(input) {
+async function auto_price_add(input, type) {
     if (!torn_items) torn_items = await get_torn_items();
     const itemName = input.closest('LI').querySelector('.t-overflow').innerText;
     const itemID = parseInt(torn_items[itemName]);
-    const lowest_price = await lowest_market_price(itemID);
+
+    const lowest_price = await lowest_market_price(itemID, type);
     set_regular_input(input, auto_price(lowest_price));
 }
 
 //my bazaar manage
-async function auto_price_manage(input) {
+async function auto_price_manage(input, type) {
     if (!torn_items) torn_items = await get_torn_items();
     const itemName = input.closest('div[class^=item]').getAttribute('aria-label');
     const itemID = parseInt(torn_items[itemName]);
-    const lowest_price = await lowest_market_price(itemID);
+    const lowest_price = await lowest_market_price(itemID, type);
     set_react_input(input, auto_price(lowest_price));
 }
 

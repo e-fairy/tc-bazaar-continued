@@ -21,6 +21,7 @@ All features of the script are activated by double clicking an input
 
 -   [x] Update auto pricing elements
 -   [x] Cancel API requests if an API key is not given
+-   [x] Add item market support
 -   [] Bazaar checkboxes
 -   [] Fix the gun shop sell button
 -   [] Better API key input
